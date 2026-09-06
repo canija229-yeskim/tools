@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>1초 WebP 변환기</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 60px auto; text-align: center; color: #382f2d; background: #fffcf9; }
+    .box { border: 2px dashed #d97706; padding: 40px 20px; border-radius: 12px; background: #fffcf7; cursor: pointer; }
+    .box:hover { border-color: #b45309; background: #fef3c7; }
+    .dl-btn { display: inline-block; background: #d97706; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; margin-top: 16px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h3>🖼️ WebP 이미지 압축기</h3>
+  <div class="box" onclick="document.getElementById('imgInput').click()">
+    이미지를 드래그하거나 클릭하세요 (PNG/JPG)
+    <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="convert(event)">
+  </div>
+  <div id="res"></div>
+
+  <script>
+    function convert(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const img = new Image();
+      img.onload = () => {
+        const cvs = document.createElement('canvas');
+        cvs.width = img.width; cvs.height = img.height;
+        cvs.getContext('2d').drawImage(img, 0, 0);
+        cvs.toBlob(b => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(b);
+          a.download = `webp_${file.name.split('.')[0]}.webp`;
+          a.className = 'dl-btn';
+          a.innerText = `⬇️ 다운로드 (${Math.round(b.size/1024)}KB)`;
+          document.getElementById('res').innerHTML = '';
+          document.getElementById('res').appendChild(a);
+        }, 'image/webp', 0.8);
+      };
+      img.src = URL.createObjectURL(file);
+    }
+  </script>
+</body>
+</html>
